@@ -6,8 +6,8 @@
 #define knob4B 15
 #define knob2A 7
 #define knob2B 6
-#define wheelA 34
-#define wheelB 33
+#define wheelA 33
+#define wheelB 34
 
 #define leftButtonsA 9
 #define leftButtonsB 14

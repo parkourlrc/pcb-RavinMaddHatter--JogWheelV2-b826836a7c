@@ -10,7 +10,7 @@
 #define increasePlaySpeedAddr 4
 #define increaseReverseSeepdAddr 6
 #define stopPlaybackAddr 8
-const byte defaultSwitchFunctions[] = {8,  8,  8, 68,  36,  36,  8,  8,  8,  8,  8,  8,  8,  4,  4,  4,  4,  4};//functions are bit feilds [alt,ctrl, shift, UnAssigned,normal,risingEdge,FallingEdge,UnAssigned]
+const byte defaultSwitchFunctions[] = {8,  8,  8, 8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8};//functions are bit feilds [alt,ctrl, shift, UnAssigned,normal,risingEdge,FallingEdge,UnAssigned]
 const int switchFunctionAddr[]   = {83, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82};
 const int switchAssignmentAddr[] ={10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44};
 
@@ -18,9 +18,9 @@ const int defaultSwitchAssignments[] = {
   KEY_0, 
   KEY_1, 
   KEY_2, 
-  KEY_BACKSLASH, // 3 key on my setup
-  KEY_LEFT_BRACE, //1 key on my setup
-  KEY_RIGHT_BRACE, //2 key on my setup
+  KEY_Z, // 3 key on my setup
+  KEY_4, //1 key on my setup
+  KEY_5, //2 key on my setup
   KEY_6, //down key on my setup
   KEY_7, 
   KEY_8, 
@@ -42,7 +42,7 @@ const int knobAssignmetsAddr[3][2] = {{54,56},{58,60},{62,64}};
 const int defaultknobAssignmets[3][2]={
                           {KEY_J, KEY_L},//Top
                           {KEY_RIGHT_BRACE, KEY_LEFT_BRACE},//midle
-                          {KEY_DOWN, KEY_UP}//bottom
+                          {KEY_L, KEY_R}//bottom
                           };
 
                           
@@ -61,11 +61,19 @@ void writeIntIntoEEPROM(int address, int number)
   byte byte2 = number & 0xFF;
   EEPROM.write(address, byte1);
   EEPROM.write(address + 1, byte2);
+  
+  USBSerial.println(address);
+  USBSerial.println(byte1);
+  USBSerial.println(byte2);
 }
 int readIntFromEEPROM(int address)
 {
   byte byte1 = EEPROM.read(address);
   byte byte2 = EEPROM.read(address + 1);
+  USBSerial.println(address);
+
+  USBSerial.println(byte1);
+  USBSerial.println(byte2);
   return (byte1 << 8) + byte2;
 }
 
@@ -75,18 +83,24 @@ void setDefaultValues(){
   writeIntIntoEEPROM(increasePlaySpeedAddr,increasePlaySpeedDefault);
   writeIntIntoEEPROM(increaseReverseSeepdAddr, increaseReverseSpeedDefault);
   writeIntIntoEEPROM(stopPlaybackAddr, stopPlaybackDefault);
-  for(int i=0;i<4;i++){
-    writeIntIntoEEPROM(keyAssignmentAddr[i],defaultkeyAssignments[i]);
-  }
   for(int i=0;i<18;i++){
-    writeIntIntoEEPROM(switchAssignmentAddr[i],defaultSwitchAssignments[i]);
     EEPROM.write(switchFunctionAddr[i],defaultSwitchFunctions[i]);
+    writeIntIntoEEPROM(switchAssignmentAddr[i],defaultSwitchAssignments[i]);
+    USBSerial.print("pin: "); 
+    USBSerial.print(i);
+    USBSerial.print(" Assignmets: "); 
+    USBSerial.print(switchFunctionAddr[i]);
+    USBSerial.print(" type: "); 
+    USBSerial.print(defaultSwitchFunctions[i]);
+    USBSerial.println(""); 
+      
   }
   for(int i = 0; i<3;i++){
     for(int j=0; j<2;j++){
       writeIntIntoEEPROM(knobAssignmetsAddr[i][j],defaultknobAssignmets[i][j]);
     }
   }
+  EEPROM.commit();
 }
 void printSettings(){
   USBSerial.print("Forward: "); 
@@ -131,6 +145,14 @@ void initKeybindings(){
   for(int i=0;i<18;i++){
     SwitchAssignments[i]=readIntFromEEPROM(switchAssignmentAddr[i]);
     SwitchFunctions[i]=EEPROM.read(switchFunctionAddr[i]);
+      USBSerial.print("pin: "); 
+      USBSerial.print(i);
+      USBSerial.print(" Assignmets: "); 
+      USBSerial.print(SwitchAssignments[i]);
+      USBSerial.print(" type: "); 
+      USBSerial.print(SwitchFunctions[i]);
+      USBSerial.println(""); 
+
   }
   for(int i = 0; i<3;i++){
     for(int j=0; j<2;j++){

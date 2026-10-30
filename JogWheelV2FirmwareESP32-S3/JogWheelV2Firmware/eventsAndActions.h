@@ -5,12 +5,12 @@ void eventLoop(){
     callTask();
     eventQued = false;
   }
-  if (Serial.available() > 0){
+  if (USBSerial.available() > 0){
     String cmd;
     int pinNo;
     int value;
     byte bvalue;
-    commandRecieved = Serial.readStringUntil('\0');
+    commandRecieved = USBSerial.readStringUntil('\0');
     commandRecieved.trim();
 
     cmd=commandRecieved.substring(0,commandRecieved.indexOf(" "));
@@ -38,6 +38,7 @@ void eventLoop(){
         USBSerial.println(bvalue,BIN);
         SwitchFunctions[pinNo]=bvalue;
         EEPROM.write(switchFunctionAddr[pinNo],bvalue);
+        EEPROM.commit();
         //printSettings();
         break;
       case 'k'://knob not written

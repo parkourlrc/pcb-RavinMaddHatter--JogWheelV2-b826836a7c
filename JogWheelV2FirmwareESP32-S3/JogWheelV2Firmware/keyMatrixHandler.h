@@ -54,13 +54,11 @@ void handleMatrix(){
       for (int col = 0; col < 3; col++) {
         
         switchStates[keyMatrix[0][row][col]]= !digitalRead(mat1ColPins[col]);//Sets switch state to current inverted measurement
-        switchStates[keyMatrix[1][row][col]]= !digitalRead(mat2ColPins[col]);//Sets switch state to current inverted measurement
-        
+        switchStates[keyMatrix[1][row][col]]= !digitalRead(mat2ColPins[col]);//Sets switch state to current inverted measurement        
       }
       digitalWrite(mat1RowPins[row], HIGH);//set the pint back to high to prevent misreads
       digitalWrite(mat2RowPins[row], HIGH);//set the pint back to high to prevent misreads
     }
-  
     for (int swIndex=0; swIndex<18;swIndex++){
       if (switchStates[swIndex] != prevSwState[swIndex]) {
         timeSinceLastChange[swIndex] = 0;//Reset ever transition
@@ -76,6 +74,7 @@ void handleMatrix(){
       prevSwState[swIndex] = switchStates[swIndex];
       
     }
+    
     keymatriclastcheck=0;
   }
   

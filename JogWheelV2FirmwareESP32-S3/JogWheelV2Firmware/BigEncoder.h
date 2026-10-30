@@ -5,10 +5,14 @@ int bigWheelDir=0;
 long bigWheelDetentVel=0;
 //Big Wheel state machine definitions
 int bigWheelState = 0;
+
 #define frameForwardMaxSpeed 75
 #define playForwardSpeed 150
+ESP32Encoder wheel;
+void initWheel(){
+  wheel.attachHalfQuad(wheelA, wheelB);
+}
 
-Encoder wheel(wheelA, wheelB);
 elapsedMillis bigWheelDeltaTime;
 #define bigWheelTimeout 50
 
@@ -109,9 +113,9 @@ int doubleSpeedPlay(float wheelSpeed){
 }
 
 void processBigWheel(){
-  bigWheelPos=wheel.read();
-  
-  if (bigWheelDeltaTime>=bigWheelTimeout){
+  bigWheelPos=wheel.getCount();
+  USBSerial.println(bigWheelPos);;
+  /*if (bigWheelDeltaTime>=bigWheelTimeout){
     if(bigWheelPos>prevBigWheelPos){
       bigWheelDir=1;
     }
@@ -140,8 +144,9 @@ void processBigWheel(){
         
       }
     }
-
-    prevBigWheelPos=bigWheelPos;//sets for next loop
+    */
+    //wheel.clearCount();
+    //prevBigWheelPos=bigWheelPos;//sets for next loop
     bigWheelDeltaTime=0;//resets for next loop
-  }
+  //}
 }

@@ -1,7 +1,6 @@
-#include <Encoder.h>
+#include <ESP32Encoder.h>
 #include "keydef.h"
 #include <elapsedMillis.h>
-
 typedef void (*taskPointer) ();
 taskPointer callTask;
 elapsedMillis taskTimer;
@@ -11,23 +10,22 @@ String commandRecieved;
 
 bool normalMode = true;
 
-void setDelayedFunctionCall(long msDelay,taskPointer task ){
-  callTask = task;
-  eventQued = true;
-  eventTime = msDelay;
-}
+//void setDelayedFunctionCall(long msDelay,taskPointer task ){
+//  callTask = task;
+//  eventQued = true;
+//  eventTime = msDelay;
+//}
 
 #include "USB.h"
 #include "USBHIDKeyboard.h"
 USBHIDKeyboard Keyboard;
-USBCDC USBSerial;
-#include "usbHandler.h"
+USBCDC USBSerial ;
 
 #include "keyBindings.h"
 #include "actions.h"
 
 #include "pins.h"
-#include "BigEncoder.h"
+//#include "BigEncoder.h"
 #include "auxEncoders.h"
 #include "keyMatrixHandler.h"
 #include "eventsAndActions.h"
@@ -40,29 +38,29 @@ elapsedMillis SocketTiming;
 
 
 void setup() {
+  ESP32Encoder::useInternalWeakPullResistors = puType::up;
   // put your setup code here, to run once:
-  Keyboard.begin();
-  USB.onEvent(usbEventCallback);
-  USBSerial.onEvent(usbEventCallback);
+  initEncoders();
+  //initWheel();
+  EEPROM.begin(10000);
   USBSerial.begin();
   USB.begin();
+  Keyboard.begin();
   initKeyMatrix();//from keyMatrixHandler.h
   initKeybindings();
-  
 }
   
   
 
 
 void loop() {
-  
-  // put your main code here, to run repeatedly:
-  processBigWheel();//from "BigEncoder.h"
+  //processBigWheel();//from "BigEncoder.h"
   readAuxEncoders();//from "auxEncoders.h"
   handleMatrix();
   eventLoop();
   //
-  if (SocketTiming>= socketUpdateRate){
+  //if (SocketTiming>= socketUpdateRate){
+    /*
     if(!normalMode){
       Serial.print("BWP ");
       Serial.print(bigWheelPos);
@@ -83,5 +81,5 @@ void loop() {
       Serial.println("");
     }
     SocketTiming=0;
-  }
+  //}*/
 }
